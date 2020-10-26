@@ -11,10 +11,10 @@ function setupVars() {
 
     local greatestGenNum
     greatestGenNum=$( \
-        nix-env --list-generations --profile "$genProfilePath" \
-            | tail -1 \
-            | sed -E 's/ *([[:digit:]]+) .*/\1/')
-
+        find "$profilesPath" -name 'home-manager-*-link' \
+            | sed 's/^.*-\([0-9]*\)-link$/\1/' \
+            | sort -rn \
+            | head -1)
     if [[ -n $greatestGenNum ]] ; then
         oldGenNum=$greatestGenNum
         newGenNum=$((oldGenNum + 1))
@@ -68,7 +68,7 @@ fi
 
 if [[ -v VERBOSE ]]; then
     echo -n "Using Nix version: "
-    nix-env --version
+    nix-store --version
 fi
 
 $VERBOSE_ECHO "Activation variables:"
